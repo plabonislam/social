@@ -10,75 +10,91 @@ import { reducer, posts } from "../reducers/userReducer";
 import { userContext } from "../App";
 export const LikeContext = createContext();
 
-const Item = ({ _id, title, body,favourite, likes, image, postedBy: { name } }) => {
+const Item = ({
+  _id,
+  title,
+  body,
+  favourite,
+  likes,
+  image,
+  comments,
+  postedBy: { name },
+}) => {
   const { state, dispatch } = useContext(userContext);
   const { state2, dispatch2, posts } = useContext(LikeContext);
-  
+  const [mess, setMess] = useState("");
 
   const likePost = (id) => {
-    code("like", id,"PUT");
+    code("like", id, "PUT");
   };
 
   const dislikePost = (id) => {
-    code("dislike", id,"PUT");
+    code("dislike", id, "PUT");
   };
- const fav =(id)=>{
-   code("fav",id,"PUT");
- }
-
+  const fav = (id) => {
+    code("fav", id, "PUT");
+  };
 
   const unfav = (id) => {
-    code("unfav", id,"PUT");
+    code("unfav", id, "PUT");
+  };
+
+  const del = (id) => {
+    code("del", id, "delete");
   };
 
 
-  const del=(id)=>{
-    code ("del",id,"delete");
-  }
-  const code = (url, id,method) => {
+  const handle = (id) => {
+  console.log("JJJJJJJJJJJ")
+    code("comment", id, "PUT");
+  };
+const clearState = () => {
+  setMess("");
+};
+  const code = (url, id, method) => {
     let auth = localStorage.getItem("auth");
+    console.log("SHOW ME ", mess);
+    
     axios({
       method: method,
       url: `http://localhost:3000/posts/${url}`,
-      data: { postId: id },
+      data: { postId: id,  text:mess },
 
       headers: {
         Authorization: `Bearer ${auth}`,
       },
     })
       .then((response) => {
-        
+        console.log(response)
         let all = posts;
         console.log(method);
-        if (method === "delete"){
+        if (method === "delete") {
           alert(response.data.mess);
           if ("Not An Author" !== response.data.mess)
-           all = posts.filter((word) => word._id != id);
-      }
-
-      else{
-
-         all = posts.map((item) => {
-          if (id == item._id) {
-            console.log("i am groot");
-            //   continue;
-             return response.data;
-          } else {
-            return item;
-          }
-        });
-      }
+            all = posts.filter((word) => word._id != id);
+        } else {
+          all = posts.map((item) => {
+            if (id == item._id) {
+              console.log("i am groot");
+              //   continue;
+              return response.data;
+            } else {
+              return item;
+            }
+          });
+        }
         dispatch2({ type: "POST", payload: all });
+      
       })
       .catch((err) => console.log(err));
+      clearState();
   };
 
   return (
     <div className="card home">
       <h5>
         {name}
-        <span style={ {float:"right"}}>
-          
+        <span style={{ float: "right" }}>
           <i
             className="material-icons"
             onClick={() => {
@@ -137,9 +153,37 @@ const Item = ({ _id, title, body,favourite, likes, image, postedBy: { name } }) 
         </p>
         <p>{likes.length} likes </p>
         <p>{body}</p>
+        <p>Comment--</p>
+        {comments.map((it,k)=>{
+          return (
+            <p key={k}>
+              <strong>{it.name}</strong>
+
+              <small>{it.text}</small>
+            </p>
+          );
+        })}
       </div>
+
       <div className="card-action">
-        <input id="last_name" type="text" className="validate" />
+        <input
+          id="last_name"
+          type="text"
+          onChange={(e) => setMess(e.target.value)}
+          value={mess}
+          className="validate"
+        />
+
+        <button
+          className="btn waves-effect waves-light"
+          type="submit"
+          name="action"
+          onClick={() => {
+            handle(_id);
+          }}
+        >
+          Log In
+        </button>
       </div>
     </div>
   );

@@ -8,7 +8,7 @@ import "./App.css";
 import Profile from "./component/Profile.js";
 import Home from "./component/Home.js";
 import CreatePost from "./component/CreatePost.js";
-
+import UserProfile from "./component/UserProfile.js";
 import {reducer,initialState}from "./reducers/userReducer";
 
 export const userContext=createContext();
@@ -29,25 +29,31 @@ const history=useHistory();
   }
   
   }, []);
-return(<Switch>
-  <Route path="/" exact>
-    <Home />
-  </Route>
-  <Route path="/login" exact>
-    <Login />
-  </Route>
-  <Route path="/signup" exact>
-    <SignUp />
-  </Route>
+return (
+  <Switch>
+    <Route path="/" exact>
+      <Home />
+    </Route>
+    <Route path="/login" exact>
+      <Login />
+    </Route>
+    <Route path="/signup" exact>
+      <SignUp />
+    </Route>
 
-  <Route path="/profile" exact>
-    <Profile />
-  </Route>
+    <Route path="/profile" exact>
+      <Profile />
+    </Route>
 
-  <Route path="/createPost" exact>
-    <CreatePost />
-  </Route>
-</Switch>);
+    <Route path="/createPost" exact>
+      <CreatePost />
+    </Route>
+
+    <Route path="/profile/:userId" exact>
+      <UserProfile />
+    </Route>
+  </Switch>
+);
 
 }
 

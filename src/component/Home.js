@@ -8,6 +8,7 @@ import React, {
 import axios from "axios";
 import { reducer, posts } from "../reducers/userReducer";
 import { userContext } from "../App";
+import {Link} from "react-router-dom";
 export const LikeContext = createContext();
 
 const Item = ({
@@ -18,12 +19,12 @@ const Item = ({
   likes,
   image,
   comments,
-  postedBy: { name },
+  postedBy: { name,_id :pid},
 }) => {
   const { state, dispatch } = useContext(userContext);
   const { state2, dispatch2, posts } = useContext(LikeContext);
   const [mess, setMess] = useState("");
-
+  console.log(state);
   const likePost = (id) => {
     code("like", id, "PUT");
   };
@@ -93,16 +94,18 @@ const clearState = () => {
   return (
     <div className="card home">
       <h5>
-        {name}
+        <Link to={pid === state._id ? "/profile": `/profile/${pid}`}> {name} </Link>
         <span style={{ float: "right" }}>
-          <i
-            className="material-icons"
-            onClick={() => {
-              del(_id);
-            }}
-          >
-            delete_forever
-          </i>
+          {pid === state._id && (
+            <i
+              className="material-icons"
+              onClick={() => {
+                del(_id);
+              }}
+            >
+              delete_forever
+            </i>
+          )}
         </span>
       </h5>
       <div className="card-image hcard">
@@ -154,7 +157,7 @@ const clearState = () => {
         <p>{likes.length} likes </p>
         <p>{body}</p>
         <p>Comment--</p>
-        {comments.map((it,k)=>{
+        {comments.map((it, k) => {
           return (
             <p key={k}>
               <strong>{it.name}</strong>
@@ -182,7 +185,7 @@ const clearState = () => {
             handle(_id);
           }}
         >
-          Log In
+          comment
         </button>
       </div>
     </div>
